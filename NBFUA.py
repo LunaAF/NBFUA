@@ -1,6 +1,8 @@
 ﻿#APIs
 import discord
-from discord.ext import commands, Option
+from discord import Option
+from discord.ext import commands
+from discord.ui import InputText, Modal
 #libs
 import random as r
 #files
@@ -115,13 +117,18 @@ async def send(ctx, сообщение: Option(str, required=True)):
     await ctx.respond('Сообщение успешно отправлено!', ephemeral=True)
 
 #make a publication in a.info
-@client.command()
-@commands.has_role(a.publisher)
-async def publish(ctx, *, publication):
-    f = '\n'
-    embed = discord.Embed(title=f'{publication[:publication.index(f)]}', description=f'{publication[publication.index(f):]}', color=0xff802d)
-    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url)
-    channel = client.get_channel(a.info)
-    await channel.send(embed=embed)
+class Publication(Modal):
+    def __init__(self) -> None:
+        super().__init__(title='Меню создания публикаций')
+        self.add_item(InputText(label='Имя публикации', placeholder='Введите имя публикации...', style=discord.InputTextStyle.short)) 
+        self.add_item(InputText(label= 'Содержание публикации', placeholder='Тема публикации этой недели: ...\n\nДоп. информация: ...', style=discord.InputTextStyle.long))
+    async def callback(self, interaction: discord.Interaction):
+        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=0xff802d)
+        await interaction.response.send_message(embeds=[embed])
+
+@client.slash_command(name='publish', description=f'Опубликуйте что-нибудь!')
+async def publish(ctx):
+    modal = Publication()
+    await ctx.interaction.response.send_modal(modal)
 
 client.run(secret.secret)
