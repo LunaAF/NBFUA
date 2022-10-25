@@ -59,11 +59,11 @@ async def on_message(ctx):
         if flip == 1: await ctx.add_reaction(a.check)
         else: await ctx.add_reaction(a.cross)
     #8ball mention
-    if client.user.mentioned_in(ctx):
+    if ctx.author.id != a.client and client.user.mentioned_in(ctx):
         with open('logs.txt', 'a') as f:
             responses = f.readlines()
             await ctx.reply(f'{r.choice(responses)}', mention_author = True)
-    if ctx.author.id != a.client or client.user.mentioned_in(ctx):
+    if ctx.author.id != a.client and client.user.mentioned_in(ctx) and f'{a.client}' not in message and len(message) > 8:
         with open('logs.txt', 'a') as f:
             f.write(f'\n{message}')
     await client.process_commands(ctx)

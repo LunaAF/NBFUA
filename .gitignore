@@ -1,3 +1,5 @@
 secret.py
 example.txt
 logs.txt
+__pycache__/secret.cpython-310.pyc
+__pycache__/alias.cpython-310.pyc
