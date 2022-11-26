@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.ui import InputText, Modal
 #libs
 import random as r
+import codecs as c
 #files
 import secret
 import alias as a
@@ -55,7 +56,7 @@ async def on_message(ctx):
         
     #inf-ball mentions
     if ctx.author.id != a.client and client.user.mentioned_in(ctx):
-        with open('logs.txt', 'a') as f:
+        with open('logs.txt', 'r') as f:
             responses = f.readlines()
             await ctx.reply(f'{r.choice(responses)}', mention_author = True)
 
@@ -130,15 +131,34 @@ async def send(ctx, сообщение: Option(str, required=True)):
 #make a publication in a.info
 class Publication(Modal):
     def __init__(self) -> None:
-        super().__init__(title='Меню создания публикаций')
+        super().__init__(title='📝 Меню создания публикаций 📝')
         self.add_item(InputText(label='Имя публикации', placeholder='Введите имя публикации...', style=discord.InputTextStyle.singleline)) 
-        self.add_item(InputText(label= 'Содержание публикации', placeholder='Тема публикации этой недели: ...\n\nДоп. информация: ...', style=discord.InputTextStyle.long))
+        self.add_item(InputText(label='Содержание публикации', placeholder='Тема публикации этой недели: ...\n\nДоп. информация: ...', style=discord.InputTextStyle.long))
     async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=0xff802d)
+        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=interaction.user.color)
+        embed.set_author(name=interaction.user.nick, icon_url=interaction.user.avatar)
         await interaction.response.send_message(embeds=[embed])
 @client.slash_command(name=f'{a.publish[0]}', description=f'{a.publish[1]}')
 async def publish(ctx):
     modal = Publication()
+    await ctx.interaction.response.send_modal(modal)
+
+#elections!
+class Elections(Modal):
+    def __init__(self) -> None:
+        super().__init__(title='🗳️ Меню создания заявок 🗳️')
+        self.add_item(InputText(label='Заявка', placeholder='Если я стану лидером NBFU, я ...', style=discord.InputTextStyle.singleline)) 
+    async def callback(self, interaction: discord.Interaction):
+        embed = discord.Embed(title='',description=self.children[0].value, color=interaction.user.color)
+        embed.set_author(name=interaction.user.nick, icon_url=interaction.user.avatar)
+        with c.open('elections.txt', 'r', 'utf-8') as f:
+            if f'{interaction.user.id}' in ''.join(f): await interaction.response.send_message('Вы уже подали заявку.', ephemeral=True)
+            else:
+                with c.open('elections.txt', 'a', 'utf-8') as g: g.write(f'\n{interaction.user.id}///{self.children[0].value}')
+                await interaction.response.send_message('Отлично! Ваша заявка была записана и будет опубликована <t:1669791600:D> со всеми остальными!\nПревью:', embeds=[embed], ephemeral=True)
+@client.slash_command(name=f'{a.election[0]}', description=f'{a.election[1]}')
+async def election(ctx):
+    modal = Elections()
     await ctx.interaction.response.send_modal(modal)
 
 client.run(secret.secret)
