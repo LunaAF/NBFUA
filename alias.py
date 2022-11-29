@@ -10,9 +10,9 @@ threads = 986923185519878204
 publisher = '📰 ⠀⠀⠀Publisher⠀⠀⠀ 🗞️'
 #emojis
 nbfu = '<:NBFU:1013999562995806300>'
-heart = '<:heart:1013741703158571048>'
-check = '<:check:1020635529382989885>'
-cross = '<:crossmark:1019227582778064966>'
+heart = '<:winterheart:1046303983158972526>'
+check = '<:check:1046314990010912878>'
+cross = '<:crossmark:1046310649640267786>'
 #ids
 xo = 577560330352197660
 client = 972671424693153872

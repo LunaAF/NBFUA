@@ -35,10 +35,13 @@ async def on_message(ctx):
     if ctx.channel.id == a.galery:
         if not ctx.attachments: await ctx.channel.purge(limit=1)
         else: await ctx.add_reaction(a.heart)
+    #delete messages by anyone_but_the_bot in a.info
+    if ctx.channel.id == a.info and ctx.author.id != a.client: await ctx.channel.purge(limit=1)
     #heart publications to a.info
     if ctx.channel.id == a.info: await ctx.add_reaction(a.heart)
     #add a check, a cross and create a thread to any message in a.threads
     if ctx.channel.id == a.threads:
+        await ctx.add_reaction(a.heart)
         await ctx.add_reaction(a.check)
         await ctx.add_reaction(a.cross)
         await ctx.create_thread(name=f'[{ctx.author.name[:1].upper()}]: {ctx.content}', auto_archive_duration=1440)
@@ -61,7 +64,7 @@ async def on_message(ctx):
             await ctx.reply(f'{r.choice(responses)}', mention_author = True)
 
     #grab messages for responding
-    if ctx.author.id != a.client and not client.user.mentioned_in(ctx) and f'{a.client}' not in message and len(message) > 8 and '@' not in message:
+    if ctx.author.id != a.client and not client.user.mentioned_in(ctx) and f'{a.client}' not in message and len(message) > 8 and '@' not in message and 'http' not in message and ctx.channel.id == a.general:
         with open('logs.txt', 'a') as f:
             f.write(f'\n{message}')
 
@@ -160,5 +163,16 @@ class Elections(Modal):
 async def election(ctx):
     modal = Elections()
     await ctx.interaction.response.send_modal(modal)
+
+@client.slash_command(name='applicants')
+async def announce(ctx):
+    with c.open('elections.txt', 'r', 'utf-8') as f:
+        g = f.readlines()
+        for x in range(len(g)):
+            y = g[x].split('///')
+            contender = await client.fetch_user(y[0])
+            application = discord.Embed(title='', description=y[1], color=contender.accent_color)
+            application.set_author(name=contender.display_name, icon_url=contender.display_avatar)
+            await ctx.send(embeds=[application])
 
 client.run(secret.secret)
