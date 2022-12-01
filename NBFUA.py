@@ -34,14 +34,14 @@ async def on_message(ctx):
     #delete messages in a.galery which don't have attachments; heart them
     if ctx.channel.id == a.galery:
         if not ctx.attachments: await ctx.channel.purge(limit=1)
-        else: await ctx.add_reaction(a.heart)
+        else: await ctx.add_reaction(a.featured)
     #delete messages by anyone_but_the_bot in a.info
     if ctx.channel.id == a.info and ctx.author.id != a.client: await ctx.channel.purge(limit=1)
     #heart publications to a.info
-    if ctx.channel.id == a.info: await ctx.add_reaction(a.heart)
+    if ctx.channel.id == a.info: await ctx.add_reaction(a.featured)
     #add a check, a cross and create a thread to any message in a.threads
     if ctx.channel.id == a.threads:
-        await ctx.add_reaction(a.heart)
+        await ctx.add_reaction(a.featured)
         await ctx.add_reaction(a.check)
         await ctx.add_reaction(a.cross)
         await ctx.create_thread(name=f'[{ctx.author.name[:1].upper()}]: {ctx.content}', auto_archive_duration=1440)
@@ -57,16 +57,9 @@ async def on_message(ctx):
             with open('example.txt', 'w') as f:
                 f.write('None')
         
-    #inf-ball mentions
+    #inf-ball
     if ctx.author.id != a.client and client.user.mentioned_in(ctx):
-        with open('logs.txt', 'r') as f:
-            responses = f.readlines()
-            await ctx.reply(f'{r.choice(responses)}', mention_author = True)
-
-    #grab messages for responding
-    if ctx.author.id != a.client and not client.user.mentioned_in(ctx) and f'{a.client}' not in message and len(message) > 8 and '@' not in message and 'http' not in message and ctx.channel.id == a.general:
-        with open('logs.txt', 'a') as f:
-            f.write(f'\n{message}')
+        await ctx.reply(f'{r.choice(a.responses)}', mention_author = True)
 
     await client.process_commands(ctx)
 
@@ -138,7 +131,7 @@ class Publication(Modal):
         self.add_item(InputText(label='Имя публикации', placeholder='Введите имя публикации...', style=discord.InputTextStyle.singleline)) 
         self.add_item(InputText(label='Содержание публикации', placeholder='Тема публикации этой недели: ...\n\nДоп. информация: ...', style=discord.InputTextStyle.long))
     async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=interaction.user.color)
+        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=interaction.user.accent_color)
         embed.set_author(name=interaction.user.nick, icon_url=interaction.user.avatar)
         await interaction.response.send_message(embeds=[embed])
 @client.slash_command(name=f'{a.publish[0]}', description=f'{a.publish[1]}')
@@ -146,13 +139,13 @@ async def publish(ctx):
     modal = Publication()
     await ctx.interaction.response.send_modal(modal)
 
-#elections!
+'''elections!
 class Elections(Modal):
     def __init__(self) -> None:
         super().__init__(title='🗳️ Меню создания заявок 🗳️')
         self.add_item(InputText(label='Заявка', placeholder='Если я стану лидером NBFU, я ...', style=discord.InputTextStyle.singleline)) 
     async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title='',description=self.children[0].value, color=interaction.user.color)
+        embed = discord.Embed(title='',description=self.children[0].value, color=interaction.user.accent_color)
         embed.set_author(name=interaction.user.nick, icon_url=interaction.user.avatar)
         with c.open('elections.txt', 'r', 'utf-8') as f:
             if f'{interaction.user.id}' in ''.join(f): await interaction.response.send_message('Вы уже подали заявку.', ephemeral=True)
@@ -163,7 +156,6 @@ class Elections(Modal):
 async def election(ctx):
     modal = Elections()
     await ctx.interaction.response.send_modal(modal)
-
 @client.slash_command(name='applicants')
 async def announce(ctx):
     with c.open('elections.txt', 'r', 'utf-8') as f:
@@ -173,6 +165,6 @@ async def announce(ctx):
             contender = await client.fetch_user(y[0])
             application = discord.Embed(title='', description=y[1], color=contender.accent_color)
             application.set_author(name=contender.display_name, icon_url=contender.display_avatar)
-            await ctx.send(embeds=[application])
+            await ctx.send(embeds=[application])'''
 
 client.run(secret.secret)
