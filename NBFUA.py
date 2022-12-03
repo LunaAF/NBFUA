@@ -109,6 +109,42 @@ async def example(ctx,
             f.write(f'{example.result}\n{example.num1}{операция}{example.num2}=')
             await ctx.respond(f'{example.num1}{операция}{example.num2}=...')
     else: await ctx.respond(f'Предыдущий пример \"{check[1]}...\" не был решён.')
+
+class RPS(discord.ui.View):
+    @discord.ui.button(label=f'{a.rps[1]}', style=discord.ButtonStyle.red)
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        await self.message.edit(content="`⌚` Вы думали слишком долго!", view=self)
+    async def button_rock(self, button, interaction):
+        for child in self.children:
+            child.disabled = True
+        pick = r.randint(1, 3)
+        if pick == 2: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[2]}`', view=self)
+        if pick == 1: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[1]}`', view=self)
+        if pick == 3: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[3]}`', view=self)
+    @discord.ui.button(label=f'{a.rps[2]}', style=discord.ButtonStyle.green)
+    async def button_scissors(self, button, interaction):
+        for child in self.children:
+            child.disabled = True
+        pick = r.randint(1, 3)
+        if pick == 3: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[3]}`', view=self)
+        if pick == 2: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[2]}`', view=self)
+        if pick == 1: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[1]}`', view=self)
+    @discord.ui.button(label=f'{a.rps[3]}', style=discord.ButtonStyle.blurple)
+    async def button_paper(self, button, interaction):
+        for child in self.children:
+            child.disabled = True
+        pick = r.randint(1, 3)
+        if pick == 1: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[1]}`', view=self)
+        if pick == 3: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[3]}`', view=self)
+        if pick == 2: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[2]}`', view=self)
+@client.slash_command(name=f'{a.rps[0]}', description=f'{a.rps[4]}')
+async def rps(ctx
+#, пользователь: Option(str, required=False, choices=discord.Guild.members)
+):
+    await ctx.respond('Выберите своё действие!', view=RPS(timeout=10))
+
     
 #purge messages
 @client.slash_command(name=f'{a.yeet[0]}', description=f'{a.yeet[1]}')
@@ -128,12 +164,13 @@ async def send(ctx, сообщение: Option(str, required=True)):
 class Publication(Modal):
     def __init__(self) -> None:
         super().__init__(title='📝 Меню создания публикаций 📝')
-        self.add_item(InputText(label='Имя публикации', placeholder='Введите имя публикации...', style=discord.InputTextStyle.singleline)) 
+        self.add_item(InputText(label='Имя публикации', placeholder='Введите имя публикации...', style=discord.InputTextStyle.singleline, max_length=128)) 
         self.add_item(InputText(label='Содержание публикации', placeholder='Тема публикации этой недели: ...\n\nДоп. информация: ...', style=discord.InputTextStyle.long))
+        self.add_item(InputText(label='Упомянуть (опционально)', value='<@&732987709555081289>', style=discord.InputTextStyle.singleline, required=False))
     async def callback(self, interaction: discord.Interaction):
-        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=interaction.user.accent_color)
+        embed = discord.Embed(title=self.children[0].value, description=self.children[1].value, color=interaction.user.color)
         embed.set_author(name=interaction.user.nick, icon_url=interaction.user.avatar)
-        await interaction.response.send_message(embeds=[embed])
+        await interaction.response.send_message(f'{self.children[2].value}',embeds=[embed])
 @client.slash_command(name=f'{a.publish[0]}', description=f'{a.publish[1]}')
 async def publish(ctx):
     modal = Publication()
