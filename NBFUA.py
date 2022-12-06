@@ -15,7 +15,7 @@ client = commands.Bot(command_prefix='NBFU.', intents=intents)
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.online, activity=discord.Streaming(name='Glory to NBFU!', url='https://www.youtube.com/watch?v=dQw4w9WgXcQ', twitch_name='NBFUA'))
+    await client.change_presence(status=discord.Status.online, activity=discord.Streaming(name='Да здраствует NBFU!', url='https://www.youtube.com/watch?v=dQw4w9WgXcQ', twitch_name='NBFUA'))
     print('All systems online!')
 
 @client.event
@@ -110,41 +110,39 @@ async def example(ctx,
             await ctx.respond(f'{example.num1}{операция}{example.num2}=...')
     else: await ctx.respond(f'Предыдущий пример \"{check[1]}...\" не был решён.')
 
+#Rock Paper Scissors!
 class RPS(discord.ui.View):
-    @discord.ui.button(label=f'{a.rps[1]}', style=discord.ButtonStyle.red)
     async def on_timeout(self):
-        for child in self.children:
-            child.disabled = True
-        await self.message.edit(content="`⌚` Вы думали слишком долго!", view=self)
+        self.message.delete()
+    @discord.ui.button(label=f'{a.rps[1]}', style=discord.ButtonStyle.red)
     async def button_rock(self, button, interaction):
+        pick = r.randint(1, 3)
         for child in self.children:
             child.disabled = True
-        pick = r.randint(1, 3)
-        if pick == 2: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[2]}`', view=self)
-        if pick == 1: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[1]}`', view=self)
-        if pick == 3: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[3]}`', view=self)
+        if pick == 2: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[2]}`.',view=self)
+        if pick == 1: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[1]}`.',view=self)
+        if pick == 3: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[1]}`, {a.rps[9]}`{a.rps[3]}`.',view=self)
     @discord.ui.button(label=f'{a.rps[2]}', style=discord.ButtonStyle.green)
     async def button_scissors(self, button, interaction):
+        pick = r.randint(1, 3)
         for child in self.children:
             child.disabled = True
-        pick = r.randint(1, 3)
-        if pick == 3: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[3]}`', view=self)
-        if pick == 2: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[2]}`', view=self)
-        if pick == 1: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[1]}`', view=self)
+        if pick == 3: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[3]}`.',view=self)
+        if pick == 2: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[2]}`.',view=self)
+        if pick == 1: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[2]}`, {a.rps[9]}`{a.rps[1]}`.',view=self)
     @discord.ui.button(label=f'{a.rps[3]}', style=discord.ButtonStyle.blurple)
     async def button_paper(self, button, interaction):
+        pick = r.randint(1, 3)
         for child in self.children:
             child.disabled = True
-        pick = r.randint(1, 3)
-        if pick == 1: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[1]}`', view=self)
-        if pick == 3: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[3]}`', view=self)
-        if pick == 2: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[2]}`', view=self)
+        if pick == 1: await interaction.response.edit_message(content=f'`🏳️` {a.rps[5]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[1]}`.',view=self)
+        if pick == 3: await interaction.response.edit_message(content=f'`🪢` {a.rps[6]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[3]}`.',view=self)
+        if pick == 2: await interaction.response.edit_message(content=f'`🍾` {a.rps[7]}{a.rps[8]}`{a.rps[3]}`, {a.rps[9]}`{a.rps[2]}`.',view=self)
 @client.slash_command(name=f'{a.rps[0]}', description=f'{a.rps[4]}')
 async def rps(ctx
 #, пользователь: Option(str, required=False, choices=discord.Guild.members)
 ):
-    await ctx.respond('Выберите своё действие!', view=RPS(timeout=10))
-
+    await ctx.respond('Выберите своё действие!', view=RPS(timeout=60))
     
 #purge messages
 @client.slash_command(name=f'{a.yeet[0]}', description=f'{a.yeet[1]}')
